@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-//The .proto file starts with a package declaration, which helps to prevent naming conflicts between different projects.
 package chaosmonkey;
 
 service ChaosMonkey {
@@ -24,6 +23,11 @@ message ConnMatrix {
     repeated MatRow rows = 1;
 }
 
+message MatValue {
+    int32 row = 1;
+    int32 col = 2;
+    float val = 3;
+}
 //message PhoneNumber {
 //    required string number = 1;
 //    optional PhoneType type = 2 [default = HOME];
@@ -32,9 +36,3 @@ message ConnMatrix {
 
 //phone_number = person.phones.add()
 //phone_number.number = number
-
-message MatValue {
-    int32 row = 1;
-    int32 col = 2;
-    float val = 3;
-}
