@@ -24,6 +24,15 @@ message ConnMatrix {
     repeated MatRow rows = 1;
 }
 
+//message PhoneNumber {
+//    required string number = 1;
+//    optional PhoneType type = 2 [default = HOME];
+//}
+//repeated PhoneNumber phones = 4
+
+//phone_number = person.phones.add()
+//phone_number.number = number
+
 message MatValue {
     int32 row = 1;
     int32 col = 2;
