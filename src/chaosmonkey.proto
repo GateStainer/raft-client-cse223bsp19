@@ -28,11 +28,16 @@ message MatValue {
     int32 col = 2;
     float val = 3;
 }
+//https://developers.google.com/protocol-buffers/docs/reference/python-generated
+//foo = Foo()
+//foo.nums.append(15)        # Appends one value
+//foo.nums.extend([32, 47])  # Appends an entire list
+
 //message PhoneNumber {
 //    required string number = 1;
 //    optional PhoneType type = 2 [default = HOME];
 //}
-//repeated PhoneNumber phones = 4
 
+//repeated PhoneNumber phones = 4
 //phone_number = person.phones.add()
 //phone_number.number = number
