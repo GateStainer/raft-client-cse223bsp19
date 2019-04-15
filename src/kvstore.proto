@@ -5,7 +5,7 @@ package kvstore;
 service KeyValueStore {
     rpc Get(GetRequest) returns (GetResponse) {}
     rpc Put(PutRequest) returns (PutResponse) {}
-}
+}«
 
 // You'll likely need to define more specific return codes than these!
 enum ReturnCode {
