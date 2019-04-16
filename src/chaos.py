@@ -11,7 +11,7 @@ import click
 
 @click.command()
 def run():
-    address = ['localhost:7000', 'localhost:7001', 'localhost:7002']
+    address = ['raft0.princexuan.com:7000', 'raft1.princexuan.com:7000', 'raft2.princexuan.com:7000']
     for a in address:
         upload(a)
 
