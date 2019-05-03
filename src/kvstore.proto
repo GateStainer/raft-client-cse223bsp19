@@ -5,6 +5,7 @@ package kvstore;
 service KeyValueStore {
     rpc Get(GetRequest) returns (GetResponse) {}
     rpc Put(PutRequest) returns (PutResponse) {}
+    rpc registerClient(RegisterRequest) returns (RegisterResponse){}
 }
 
 // You'll likely need to define more specific return codes than these!
@@ -13,20 +14,42 @@ enum ReturnCode {
     FAILURE = 1;
 }
 
+enum ClientRPCStatus{
+    NOT_LEADER = 0;
+    SESSION_EXPIRED = 1;
+    OK2CLIENT = 2;
+    ERROR2CLIENT = 3;
+}
+
 message GetRequest {
     string key = 1;
 }
 
 message GetResponse {
     string value = 1;
-    ReturnCode ret = 2;
+    ClientRPCStatus status = 2;
+    int32 leaderHint = 3;
 }
 
 message PutRequest {
     string key = 1;
     string value = 2;
+    int32 clientID = 3;
+    int32 sequenceNum = 4;
 }
 
 message PutResponse {
-    ReturnCode ret = 1;
+    ClientRPCStatus status = 1;
+    string response = 2;
+    int32 leaderHint = 3;
 }
+
+message RegisterRequest{
+}
+
+message RegisterResponse{
+    ClientRPCStatus status = 1;
+    int32 clientID = 2;
+    int32 leaderHint = 3;
+}
+
