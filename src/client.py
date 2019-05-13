@@ -6,14 +6,15 @@ import kvstore_pb2
 import kvstore_pb2_grpc
 import chaosmonkey_pb2
 import chaosmonkey_pb2_grpc
+from chaos import readAddress
 
 def run():
 
-    addresses = ['35.160.215.250:7000', '34.208.60.253:7000', '54.218.144.35:7000', '52.13.110.148:7000', \
-                 '54.188.17.95:7000', '34.222.132.15:7000', '52.33.179.213:7000', '54.212.238.60:7000', \
-                 '35.167.51.122:7000', '54.187.20.63:7000']
+    addresses = readAddress("remote-server.csv")
+    print(addresses)
+
+    start = time.time()
     leaderID = 0
-    clientID = -1
     try:
         while True:
             if leaderID == -1:
@@ -28,12 +29,14 @@ def run():
                 break
             else:
                 leaderID = response.leaderHint
-                time.sleep(0.1)
+                # time.sleep(0.1)
     except Exception as e:
         print(e)
-
+    print(time.time() - start)
 
     # TODO: Implement PUT and GET
+    myKey = "1"*1024
+    myValue = "1"*1024
     start = time.time()
     seq_num = 1
 
@@ -43,13 +46,13 @@ def run():
                 channel = grpc.insecure_channel(addresses[leaderID])
                 stub = kvstore_pb2_grpc.KeyValueStoreStub(channel)
                 # print("Try to put")
-                response = stub.Put(kvstore_pb2.PutRequest(key = "1", value = "100", clientID = clientID, sequenceNum = seq_num))
+                response = stub.Put(kvstore_pb2.PutRequest(key = myKey, value = myValue, clientID = clientID, sequenceNum = seq_num))
                 if response.status == kvstore_pb2.NOT_LEADER:
                     leaderID = response.leaderHint
                 elif response.status == kvstore_pb2.SESSION_EXPIRED:
                     print("Session Expired")
                 elif response.status == kvstore_pb2.OK2CLIENT:
-                    # print("PUT OK")
+                    print("PUT OK")
                     break
                 else:
                     print("PUT Error")
@@ -60,23 +63,25 @@ def run():
 
     print(time.time() - start)
 
-    # try:
-    #     while True:
-    #         channel = grpc.insecure_channel(addresses[leaderID])
-    #         stub = kvstore_pb2_grpc.KeyValueStoreStub(channel)
-    #         print("Try to get")
-    #         response = stub.Get(kvstore_pb2.GetRequest(key = "1"))
-    #         if response.status == kvstore_pb2.NOT_LEADER:
-    #             leaderID = response.leaderHint
-    #         elif response.status == kvstore_pb2.SESSION_EXPIRED:
-    #             print("Session Expired")
-    #         elif response.status == kvstore_pb2.OK2CLIENT:
-    #             print(f'GET OK: <{response.value}>')
-    #             break
-    #         else:
-    #             print("GET Error")
-    # except Exception as e:
-    #     print(e)
+    start = time.time()
+    try:
+        while True:
+            channel = grpc.insecure_channel(addresses[leaderID])
+            stub = kvstore_pb2_grpc.KeyValueStoreStub(channel)
+            print("Try to get")
+            response = stub.Get(kvstore_pb2.GetRequest(key = myKey))
+            if response.status == kvstore_pb2.NOT_LEADER:
+                leaderID = response.leaderHint
+            elif response.status == kvstore_pb2.SESSION_EXPIRED:
+                print("Session Expired")
+            elif response.status == kvstore_pb2.OK2CLIENT:
+                print(f'GET OK: ')#<{response.value}>')
+                break
+            else:
+                print("GET Error")
+    except Exception as e:
+        print(e)
+    print(time.time() - start)
 
     #
     # with grpc.insecure_channel(address) as channel:

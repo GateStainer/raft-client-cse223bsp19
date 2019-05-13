@@ -12,10 +12,18 @@ import click
 
 @click.command()
 def run():
-    address = readAddress("server-list.csv")
-    for a in address:
-        upload(a)
-    update_server(address[5], 5, True)
+    address = readAddress("remote-server.csv")
+    # start = time.time()
+    # for i in range(1):
+    #     for a in address:
+    #         upload(a, len(address))
+    # print(time.time() - start)
+    broken_list = [0, 1, 2, 3]
+    for i in broken_list:
+        try:
+            update_server(address[i], i, False)
+        except Exception:
+            pass
 
 def readAddress(file):
     servers = []
@@ -28,24 +36,23 @@ def readAddress(file):
         address.append(s["address"]+":"+s["port"])
     return address
 
-def upload(address):
+def upload(address, server_num):
     with grpc.insecure_channel(address) as channel:
         # ChaosMoney matrix creation
-        cmMat = chaosmonkey_pb2.ConnMatrix()
-        server_num = len(address)
-        for i in range(server_num):
-            mat_row = cmMat.rows.add()
-            for j in range(server_num):
-                mat_row.vals.append(float(0.0))
+        # cmMat = chaosmonkey_pb2.ConnMatrix()
+        # for i in range(server_num):
+        #     mat_row = cmMat.rows.add()
+        #     for j in range(server_num):
+        #         mat_row.vals.append(float(0.0))
                 # mat_row.vals.add(float(0.25))
 
         cmstub = chaosmonkey_pb2_grpc.ChaosMonkeyStub(channel)
         # Add more addresses
-        response = cmstub.UploadMatrix(cmMat)
-        print("Client Upload ChaosMonkey Matrix received: " + str(response.ret) + ", @: "+address)
+        # response = cmstub.UploadMatrix(cmMat)
+        # print("Client Upload ChaosMonkey Matrix received: " + str(response.ret) + ", @: "+address)
 
-        # response = cmstub.UpdateValue(chaosmonkey_pb2.MatValue(row = 1, col = 2, val = 0.99))
-        # print("Client Update ChaosMonkey Matrix Value received: " + str(response.ret) + "@: "+address)
+        response = cmstub.UpdateValue(chaosmonkey_pb2.MatValue(row = 1, col = 2, val = 0.99))
+        print("Client Update ChaosMonkey Matrix Value received: " + str(response.ret) + "@: "+address)
 
 # Update CM to simulate server crashing or restarting
 def update_server(address, server_index, crash):
